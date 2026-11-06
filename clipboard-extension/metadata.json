@@ -1,0 +1,7 @@
+{
+  "uuid": "assistant-clipboard@quick-todo",
+  "name": "Assistant Clipboard",
+  "description": "Remembers copied text for the Assistant clipboard (Super+V).",
+  "shell-version": ["49", "50"],
+  "version": 1
+}

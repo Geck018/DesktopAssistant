@@ -1,0 +1,9 @@
+{
+  "schedule": [
+    {"time": "09:00", "action": "both"},
+    {"time": "13:00", "action": "notify"},
+    {"time": "17:00", "action": "both"}
+  ],
+  "notify_if_empty": false,
+  "comment": "action: notify | open | both. Edit times, then run ./setup-schedule.sh"
+}

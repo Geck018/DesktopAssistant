@@ -1,0 +1,25 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Assistant
+Comment=Morning brief, todos, and system updates
+Exec=/home/marnus/Documents/Scripts/quick-todo/launch-silent.sh
+Path=/home/marnus/Documents/Scripts/quick-todo
+Icon=/home/marnus/Documents/Scripts/quick-todo/icon.png
+Terminal=false
+Categories=Utility;
+StartupNotify=false
+StartupWMClass=Assistant
+Actions=Brief;Todos;Morning;
+
+[Desktop Action Brief]
+Name=Morning brief
+Exec=/home/marnus/Documents/Scripts/quick-todo/launch-silent.sh --brief
+
+[Desktop Action Todos]
+Name=Todos
+Exec=/home/marnus/Documents/Scripts/quick-todo/launch-silent.sh
+
+[Desktop Action Morning]
+Name=Start in background
+Exec=/home/marnus/Documents/Scripts/quick-todo/launch-silent.sh --morning

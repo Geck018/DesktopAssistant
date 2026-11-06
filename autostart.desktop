@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Assistant (Morning)
+Comment=Login brief — runs in background, no terminal
+Exec=/home/marnus/Documents/Scripts/quick-todo/launch-silent.sh --morning
+Path=/home/marnus/Documents/Scripts/quick-todo
+Icon=/home/marnus/Documents/Scripts/quick-todo/icon.png
+Terminal=false
+StartupNotify=false
+X-GNOME-Autostart-enabled=true
+X-GNOME-Autostart-Delay=25
