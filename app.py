@@ -126,7 +126,7 @@ class AssistantApp(Gtk.Application):
         if ICON_PATH.exists():
             Gtk.Window.set_default_icon_from_file(str(ICON_PATH))
 
-        style_mod.install()
+        style_mod.install(cfg_mod.theme_name())
         self.window = Gtk.ApplicationWindow(application=self, title=APP_TITLE)
         self.window.get_style_context().add_class("assistant")
         self.window.set_default_size(500, 660)
@@ -160,6 +160,8 @@ class AssistantApp(Gtk.Application):
         brief_btn.set_tooltip_text("Open morning brief / refresh")
         brief_btn.connect("clicked", self._show_brief_and_refresh)
         header.pack_end(brief_btn)
+
+        header.pack_end(self._theme_button())
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.window.add(root)
@@ -273,6 +275,56 @@ class AssistantApp(Gtk.Application):
         if self.force_brief:
             self._start_update_scan(refresh=True, quiet=False)
 
+    def _theme_button(self) -> Gtk.Widget:
+        button = Gtk.MenuButton()
+        button.add(
+            Gtk.Image.new_from_icon_name(
+                "preferences-system-symbolic", Gtk.IconSize.BUTTON
+            )
+        )
+        button.set_relief(Gtk.ReliefStyle.NONE)
+        button.get_style_context().add_class("icon-quiet")
+        button.set_tooltip_text("Theme")
+
+        pop = Gtk.Popover.new(button)
+        pop.get_style_context().add_class("assistant")
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        box.set_margin_top(12)
+        box.set_margin_bottom(12)
+        box.set_margin_start(14)
+        box.set_margin_end(16)
+        title = Gtk.Label(label="THEME", xalign=0)
+        title.get_style_context().add_class("kicker")
+        box.pack_start(title, False, False, 0)
+
+        group: Gtk.RadioButton | None = None
+        current = style_mod.current()
+        for name, label, blurb in style_mod.CHOICES:
+            if group is None:
+                radio = Gtk.RadioButton.new_with_label(None, label)
+            else:
+                radio = Gtk.RadioButton.new_with_label_from_widget(group, label)
+            group = radio
+            radio.set_active(name == current)
+            radio.connect("toggled", self._on_theme_toggled, name)
+            note = Gtk.Label(label=blurb, xalign=0)
+            note.get_style_context().add_class("muted")
+            note.set_margin_start(24)
+            note.set_margin_bottom(2)
+            box.pack_start(radio, False, False, 0)
+            box.pack_start(note, False, False, 0)
+
+        box.show_all()
+        pop.add(box)
+        button.set_popover(pop)
+        return button
+
+    def _on_theme_toggled(self, button: Gtk.RadioButton, name: str) -> None:
+        if not button.get_active() or style_mod.current() == name:
+            return
+        style_mod.apply(name)
+        cfg_mod.set_theme(name)
+
     # ── Brief page ─────────────────────────────────────────────
     def _build_brief_page(self) -> Gtk.Widget:
         page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
@@ -290,7 +342,7 @@ class AssistantApp(Gtk.Application):
         scroll.add(content)
 
         self.brief_greeting = Gtk.Label(
-            label=f"Good {self._daypart()}", xalign=0
+            label=f"Good {self._daypart()} Marnus", xalign=0
         )
         self.brief_greeting.get_style_context().add_class("hero")
         content.pack_start(self.brief_greeting, False, False, 0)
@@ -399,10 +451,10 @@ class AssistantApp(Gtk.Application):
     def _daypart(self) -> str:
         h = datetime.now().hour
         if h < 12:
-            return "morning"
+            return "Morning"
         if h < 18:
-            return "afternoon"
-        return "evening"
+            return "Afternoon"
+        return "Evening"
 
     def _paint_brief_todos(self):
         assert self.brief_todos is not None

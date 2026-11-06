@@ -18,6 +18,7 @@ DEFAULT = {
         {"time": "17:00", "action": "both"},
     ],
     "notify_if_empty": False,
+    "theme": "sakura",
 }
 
 
@@ -46,6 +47,20 @@ def load() -> dict:
 
 def save(data: dict) -> None:
     CONFIG_PATH.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+
+
+def theme_name(cfg: dict | None = None) -> str:
+    name = str((cfg or load()).get("theme", "sakura"))
+    return name if name in ("sakura", "phyrexia", "emperors") else "sakura"
+
+
+def set_theme(name: str) -> None:
+    if CONFIG_PATH.exists():
+        data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    else:
+        data = deepcopy(DEFAULT)
+    data["theme"] = name if name in ("sakura", "phyrexia", "emperors") else "sakura"
+    save(data)
 
 
 def slots(cfg: dict | None = None) -> list[Slot]:
